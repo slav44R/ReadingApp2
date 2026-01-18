@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lector AI</title>
+
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#0b1020" />
+
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <script src="https://unpkg.com/tesseract.js@v4.0.1/dist/tesseract.min.js"></script>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <img src="icons/logo.png" alt="Lector AI" class="brand-logo">
+      <div class="brand-title">Lector AI</div>
+    </div>
+
+    <select id="lang" class="lang-select">
+      <option value="bul">🇧🇬 Български</option>
+      <option value="eng">🇺🇸 English</option>
+    </select>
+  </div>
+
+  <div class="shell">
+    <div class="app">
+      <div id="progressParent" class="progress-wrap" style="display:none;">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+
+      <div id="chat" class="chat">
+        <div class="row" style="opacity:1;">
+          <div class="avatar bot"><i class="fas fa-robot"></i></div>
+          <div class="bubble bot">
+            <div class="meta">Lector AI</div>
+            Натисни <b>+</b> и избери <b>Камера</b> или <b>Галерия</b>. Аз ще разчета текста и ще го прочета на глас. 🎧
+          </div>
+        </div>
+      </div>
+
+      <div id="stopContainer" class="stop-wrap" style="display:none;">
+        <button id="pauseBtn" class="btn">
+          <i class="fas fa-pause"></i><span>ПАУЗА</span>
+        </button>
+        <button id="stopBtn" class="btn danger">
+          <i class="fas fa-stop-circle"></i><span>СПРИ</span>
+        </button>
+      </div>
+
+      <div class="input-area safe-bottom">
+        <div class="controls">
+          <button id="uploadBtn" class="btn" title="Камера/Галерия">
+            <i class="fas fa-plus"></i>
+          </button>
+
+          <div id="status" class="status">Готов</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Галерия -->
+  <input type="file" id="fileGallery" accept="image/*" hidden />
+
+  <!-- Меню (Камера / Галерия) -->
+  <div id="pickerOverlay" class="picker-overlay hidden" aria-hidden="true">
+    <div id="pickerSheet" class="picker-sheet" role="dialog" aria-modal="true" aria-label="Избор">
+      <div class="picker-handle"></div>
+      <div class="picker-title">Избери източник</div>
+
+      <button id="pickCamera" class="picker-btn">
+        <i class="fas fa-camera"></i>
+        <span>Снимай с камера</span>
+      </button>
+
+      <button id="pickGallery" class="picker-btn">
+        <i class="fas fa-image"></i>
+        <span>Избери от галерия</span>
+      </button>
+
+      <button id="pickCancel" class="picker-cancel">Отказ</button>
+    </div>
+  </div>
+
+  <!-- Камера модал (универсален) -->
+  <div id="camOverlay" class="cam-overlay hidden" aria-hidden="true">
+    <div class="cam-modal" role="dialog" aria-modal="true" aria-label="Камера">
+      <div class="cam-top">
+        <div class="cam-title">Камера</div>
+        <button id="camClose" class="cam-x" aria-label="Затвори">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <video id="camVideo" class="cam-video" playsinline autoplay></video>
+
+      <div class="cam-actions">
+        <button id="camShoot" class="btn primary">
+          <i class="fas fa-circle"></i><span>СНИМАЙ</span>
+        </button>
+        <button id="camFlip" class="btn">
+          <i class="fas fa-sync"></i><span>ОБЪРНИ</span>
+        </button>
+      </div>
+
+      <canvas id="camCanvas" class="hidden-canvas"></canvas>
+      <div class="cam-note">* Камерата работи през HTTPS.</div>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+
+  <!-- Versioned SW register (важно за Safari кеш) -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js?v=1').catch(()=>{});
+      });
+    }
+  </script>
+</body>
+</html>
